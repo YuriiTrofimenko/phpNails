@@ -131,4 +131,41 @@ class Order {
             return false;
         }
     }
+
+    static function GetOrders() {
+
+        $ps = null;
+        $orders = null;
+
+        try {
+
+            $pdo = getDbContext();
+
+            $ps = $pdo->prepare("SELECT * FROM `Order`");
+            $ps->execute();
+
+            /*while ($row = $ps->fetch()) {
+
+                $order =
+                    new Order(
+                        $row['name']
+                        , $row['phone']
+                        , $row['desired_date']
+                        , $row['desired_time']
+                        , $row['comment']
+                        , $row['id']
+                        , $row['created_at']
+                    );
+                $orders[] = $order;
+            }*/
+
+            $orders = $ps->fetchAll();
+
+            return $orders;
+        } catch (PDOException $e) {
+
+            echo $e->getMessage();
+            return false;
+        }
+    }
 }

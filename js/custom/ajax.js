@@ -41,7 +41,7 @@ $(document).ready(function () {
         });*/
 
         $.ajax({
-            url: "api/index.php",
+            url: "api/orders.php",
             //method : "post",
             type: "POST",
             data: serializedData,
