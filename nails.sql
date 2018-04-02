@@ -33,7 +33,7 @@ CREATE TABLE `Order` (
   `desired_date` varchar(25) NOT NULL,
   `desired_time` varchar(25) NOT NULL,
   `comment` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

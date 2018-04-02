@@ -1,40 +1,46 @@
 <?php
 
-/*DB context variable*/
-$pdo = false;
+function getDbContext(){
 
-/*Connection string components*/
-$host = "localhost:3306";
-$user = "root";
-$pass = "root";
-$dbname = "nails"
-$cs = 'mysql:host=' . $host . ';dbname=' . $dbname . ';charset=utf8;';
+    /*DB context variable*/
+    $pdo = false;
 
-/*Connection options*/
-$options = array(
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8'
-);
+    /*Connection string components*/
+    $host = "localhost:3306";
+    $user = "root";
+    $pass = "root";
+    $dbname = "nails";
+    $cs = 'mysql:host=' . $host . ';dbname=' . $dbname . ';charset=utf8;';
 
-/*Try to get DB context*/
-//try {
-    $pdo = new PDO($cs, $user, $pass, $options);
-//} catch (PDOException $e) {
-    //echo mb_convert_encoding($e->getMessage(), 'UTF-8', 'Windows-1251');
-//}
+    /*Connection options*/
+    $options = array(
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8'
+    );
+
+    /*Try to get DB context*/
+    try {
+        $pdo = new PDO($cs, $user, $pass, $options);
+        return $pdo;
+    } catch (PDOException $e) {
+        echo mb_convert_encoding($e->getMessage(), 'UTF-8', 'Windows-1251');
+        return false;
+    }
+
+}
 
 /*Entities*/
 //TODO add status field
 class Order {
 
     protected $id;
+    protected $created_at;
     protected $name;
     protected $phone;
     protected $desired_date;
     protected $desired_time;
     protected $comment;
-    protected $created_at;
 
     function __construct($name
     	, $phone
@@ -58,12 +64,14 @@ class Order {
 
         try {
             
+            $pdo = getDbContext();
             $ps = $pdo->prepare("INSERT INTO `Order` (name,phone,desired_date,desired_time,comment)
                                 VALUES (:name,:phone,:desired_date,:desired_time,:comment)");
             
             //$ar = (array) $this;
             $ar = get_object_vars($this);
             //var_dump($ar);
+            array_shift($ar);
             array_shift($ar);
             
             //var_dump($ar);
@@ -91,6 +99,7 @@ class Order {
 
         try {
             
+            $pdo = getDbContext();
             $ps = $pdo->prepare("SELECT * FROM `Order` WHERE id = ?");
             
             //var_dump($ps->queryString);
@@ -123,9 +132,3 @@ class Order {
         }
     }
 }
-
-/*Data controllers*/
-/*class OrderController {
-
-
-}*/

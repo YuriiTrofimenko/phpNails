@@ -1,5 +1,5 @@
 <?php
-//if (isset($_POST['action'])) {
+if (isset($_POST['action'])) {
 
 	try {
 
@@ -7,7 +7,7 @@
 		
 		require_once('../persistence/db_connector.php'); 
 
-		if ($pdo) {
+		if (getDbContext()) {
 			
 			$action = $_POST['action'];
 		
@@ -28,7 +28,7 @@
 
 			        if ($err) {
 			            
-		                $response = "sql eror";
+		                $response = "sql eror: $err";
 			        } else {
 
 		        		$response = 'created';
@@ -50,5 +50,5 @@
     }
 
 	echo $response;
-//}
+}
 //var_dump($_POST);
