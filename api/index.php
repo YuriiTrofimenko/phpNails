@@ -1,11 +1,11 @@
 <?php
-if (isset($_POST['action'])) {
+//if (isset($_POST['action'])) {
 
 	try {
 
 		$response = "";
 		
-		required_once '../persistence/db_connector.php';
+		require_once('../persistence/db_connector.php'); 
 
 		if ($pdo) {
 			
@@ -50,5 +50,5 @@ if (isset($_POST['action'])) {
     }
 
 	echo $response;
-}
+//}
 //var_dump($_POST);
