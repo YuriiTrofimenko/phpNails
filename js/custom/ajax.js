@@ -1,45 +1,24 @@
 $(document).ready(function () {
 
+    //Обработчик события "отправка формы заказа"
     $('#create-order').submit(function (ev) {
 
         //Предотвращение отправки формы
         ev.preventDefault();
-        //console.log("test");
-        
-        //Получаем значения из полей ввода
-        var username = $('input#user-name').val();
-        var userphone = $('input#user-phone').val();
 
-        // setup some local variables
+        // Находим форму отправки заказа на странице
         var $form = $(this);
 
-        // Let's select and cache all the fields
+        //Получаем значения из полей ввода формы
         var $inputs = $form.find("input, select, button, textarea");
 
-        // Serialize the data in the form
+        //Подготавливаем данные к отправке
         var serializedData = $form.serialize();
 
-        // Let's disable the inputs for the duration of the Ajax request.
-        // Note: we disable elements AFTER the form data has been serialized.
-        // Disabled form elements will not be serialized.
+        //Отключаем поля ввода формы на время отправки запроса
         $inputs.prop("disabled", true);
-        
-        //Отправка асинхронного запроса
-        /*$.ajax({
-            url: "http://localhost/api/index.php?action=createorder"
-                +"&username="
-                + username
-                + "&userphone="
-                + userphone,
-            //dataType: 'json',
-            method : "post",
 
-            cache : false
-        }).done(function(data) {
-            
-            console.log(data);
-        });*/
-
+        //Отправка асинхронного запроса на сохранение данных в БД
         $.ajax({
             url: "api/orders.php",
             //method : "post",
@@ -48,6 +27,7 @@ $(document).ready(function () {
             cache : false
         }).done(function(data) {
             
+            //Если ответ от сервера получен -
             console.log(data);
             $inputs.prop("disabled", false);
         });
