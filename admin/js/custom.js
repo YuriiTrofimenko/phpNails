@@ -19,13 +19,19 @@ $(document).ready(function() {
             console.log(data);
 
             //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
+            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
+            //далее можно форматировать при помощи js)
 		  	var template = Hogan.compile(
 		  		'<table class="table">'
 				+  '<thead>'
 				+    '<tr>'
 				+      '<th>ID</th>'
-				+       '<th>name</th>'
-                +       '<th>phone</th>'
+				+       '<th>имя</th>'
+                +       '<th>телефон</th>'
+                +       '<th>желаемая дата</th>'
+                +       '<th>желаемое время</th>'
+                +       '<th>комментарий</th>'
+                +       '<th>добавлен</th>'
 				+    '</tr>'
 				+  '</thead>'
 				+  '<tbody>'
@@ -34,6 +40,10 @@ $(document).ready(function() {
 				+   			'<th scope="row">{{id}}</th>'
 				+               '<td>{{name}}</td>'
                 +               '<td>{{phone}}</td>'
+                +               '<td>{{desired_date}}</td>'
+                +               '<td>{{desired_time}}</td>'
+                +               '<td>{{comment}}</td>'
+                +               '<td>{{created_at}}</td>'
                 +            '</tr>'
 	      		+        '{{/orders}}'
                 +	'</tbody>'
