@@ -10,7 +10,7 @@ if (isset($_REQUEST['action'])) {
 		//Подключаем файл работы с БД
 		require_once('../persistence/db_connector.php');
 		//Подключаем файл работы с БД
-		require_once('../persistence/entities/Manicurist.php'); 
+		require_once('../persistence/entities/Hour.php'); 
 
 		//Если связь с БД установлена
 		if (getDbContext()) {
@@ -42,20 +42,22 @@ if (isset($_REQUEST['action'])) {
 			        }
 					break;
 				}*/
-				case 'fetch-all-manicurists': {
+				//localhost/site1/public_html/api/hours.php?action=get-available-hours&manicurist-id=1&date=2018-04-02
+				case 'get-available-hours': {
 					//Получаем из БД список заказов в виде многомерного массива
-			        $manicurists = Manicurist::GetManicurists();
+			        $hours = Hour::GetAvailableHours($_REQUEST['manicurist-id'], $_REQUEST['date']);
 			        //Кодируем его в формат json и сохраняем в переменную ответа
-	        		$response = json_encode(['manicurists' => $manicurists]);
+	        		$response = json_encode(['hours' => $hours]);
 					break;
 				}
 
 				//Запрос создания записи о заказе со страницы admin/index.html (отправлен файлом admin/js/custom.js)
-				case 'fetch-available-manicurists': {
+				//http://localhost/site1/public_html/api/hours.php?action=get-free-hours&manicurist-id=1&date=2018-04-02
+				case 'get-free-hours': {
 					//Получаем из БД список заказов в виде многомерного массива
-			        $manicurists = Manicurist::GetAvailableManicurists($_REQUEST['calendar']);
+			        $hours = Hour::GetFreeHours($_REQUEST['manicurist-id'], $_REQUEST['date']);
 			        //Кодируем его в формат json и сохраняем в переменную ответа
-	        		$response = json_encode(['manicurists' => $manicurists]);
+	        		$response = json_encode(['hours' => $hours]);
 					break;
 				}
 				

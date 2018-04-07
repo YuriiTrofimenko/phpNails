@@ -66,6 +66,10 @@ WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
 
 SELECT `m`.`id`, `m`.`name` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
 
+SELECT `m`.`id`, `m`.`name`, `rh`.`hours`
+FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`)
+WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
+
 */
 
         try {

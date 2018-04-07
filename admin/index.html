@@ -1,37 +1,78 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Nails - dashboard</title>
-	<!--Import Google Icon Font-->
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<!--Import materialize.css-->
-	<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
-</head>
-<body>
-	<div class="container">
-	    <div class="row">
-	    	<div class="col s12 m3 l3 xl3">
-	        	<h4>Заказ</h4>
-	        	
-	        </div>
-	        <div class="col s12 m9 l9 xl9">
-	        	<h4>Заказы</h4>
-	        	<form>
-	        		<label for="calendar">Выберите дату: </label>
-	        		<input id="calendar" name="calendar" type="date">
-	        	</form>
-	        	
-	        	<!-- Сюда при помощи jquery помещается шаблон, заполненный данными о заказах -->
-	        	<div id="table-container"></div>
-	        </div>
-	    </div>
-	</div>
-	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-	<!--JavaScript at end of body for optimized loading-->
-  	<script type="text/javascript" src="js/materialize.min.js"></script>
-  	<script type="text/javascript" src="js/hogan-3.0.2.min.js"></script>
-  	<script type="text/javascript" src="js/custom.js"></script>
-</body>
+    <head>
+        <meta charset="utf-8">
+            <meta content="IE=edge" http-equiv="X-UA-Compatible">
+                <title>
+                    Nails - dashboard
+                </title>
+                <!--Import Google Icon Font-->
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                    <!--Import materialize.css-->
+                    <link href="css/materialize.min.css" media="screen,projection" rel="stylesheet" type="text/css"/>
+                </link>
+            </meta>
+        </meta>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m3 l3 xl3">
+            		<h4>
+                        Создать
+                    </h4>
+                	<div class="card">
+
+                		<div class="card-content white-text">
+		                    
+		                    <form id="create-order">
+		                    	<label for="manicurists-select">
+		                            Мастер:
+		                        </label>
+		                        <div id="manicurists-select" class="input-field"></div>
+		                        <label for="time-select">
+		                            Время:
+		                        </label>
+		                        <div id="time-select" class="input-field">
+		                        	<select disabled>
+					                	<option disabled="" selected="" value="">Выбор времени</option>
+					                </select>
+		                        </div>
+		                        <button disabled class="btn waves-effect waves-light" id="submit-button2" name="action" type="submit">
+		                            Добавить
+		                            <i class="material-icons right">
+		                                send
+		                            </i>
+		                        </button>
+		                    </form>
+	                    </div>
+                    </div>
+                </div>
+                <div class="col s12 m9 l9 xl9">
+                    <h4>
+                        Заказы
+                    </h4>
+                    <form>
+                        <label for="calendar">
+                            Выберите дату:
+                        </label>
+                        <input id="calendar" name="calendar" type="date">
+                        </input>
+                    </form>
+                    <!-- Сюда при помощи jquery помещается шаблон, заполненный данными о заказах -->
+                    <div id="table-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/jquery-3.3.1.min.js" type="text/javascript">
+        </script>
+        <!--JavaScript at end of body for optimized loading-->
+        <script src="js/materialize.min.js" type="text/javascript">
+        </script>
+        <script src="js/hogan-3.0.2.min.js" type="text/javascript">
+        </script>
+        <script src="js/custom.js" type="text/javascript">
+        </script>
+    </body>
 </html>

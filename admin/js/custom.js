@@ -14,6 +14,100 @@ $(document).ready(function() {
         populateTable();
     });
 
+    //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+    function populateManicuristsList() {
+        $.ajax({
+            url: "../api/manicurists.php",
+            //method : "POST",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'fetch-all-manicurists'
+            },
+            cache : false
+        }).done(function(data) {
+            
+            //В ответ получаем json-строку с данными о всех заказах
+            //и выводим в отладочную консоль браузера
+            //console.log(data);
+
+            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
+            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
+            //далее можно форматировать при помощи js)
+            var template = Hogan.compile(
+                '<select>'
+                +'<option disabled="" selected="" value="">Выбор мастера</option>'
+                +'{{#manicurists}}'                
+                +   '<option value="{{id}}">'
+                +       '{{name}}'
+                +   '</option>'
+                +'{{/manicurists}}'
+                +'</select>'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+            $('#manicurists-select').html(template.render(data));
+
+            $('#manicurists-select select').unbind("change");
+            //
+            $('#manicurists-select select').formSelect();
+
+            $('#manicurists-select select').change(function() {
+
+                //console.log($(this).val());
+                populateTimeList();
+            });
+
+            //populateTimeList();
+        });
+    }
+    populateManicuristsList();
+
+    //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+    function populateTimeList() {
+        $.ajax({
+            url: "../api/hours.php",
+            //method : "POST",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'get-free-hours'
+                , 'manicurist-id': $('#manicurists-select select option:selected').val()
+                , 'date': $('#calendar').val()
+            },
+            cache : false
+        }).done(function(data) {
+            
+            //В ответ получаем json-строку с данными о всех заказах
+            //и выводим в отладочную консоль браузера
+            //console.log(data);
+
+            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
+            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
+            //далее можно форматировать при помощи js)
+            var template = Hogan.compile(
+                '<select>'
+                +'<option disabled="" selected="" value="">Выбор времени</option>'
+                +'{{#hours}}'                
+                +   '<option value="{{id}}">'
+                +       '{{hours}}'
+                +   '</option>'
+                +'{{/hours}}'
+                +'</select>'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+            $('#time-select').html(template.render(data));
+            //
+            $('#time-select select').formSelect();
+
+            $('#time-select select').unbind("change");
+            //
+            $('#time-select select').change(function() {
+
+                $('form#create-order button').removeAttr('disabled');
+            });
+        });
+    }
+
     //Готовим функцию заполнения таблицы данными о заказах
     function populateTable() {
     	//Отправляем асинхронный запрос на сервер (в файл api/orders.php)
@@ -31,7 +125,7 @@ $(document).ready(function() {
             
             //В ответ получаем json-строку с данными о всех заказах
             //и выводим в отладочную консоль браузера
-            console.log(data);
+            //console.log(data);
 
             //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
             //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
@@ -66,6 +160,22 @@ $(document).ready(function() {
 	  		);
 		  	//Заполняем шаблон данными и помещаем на веб-страницу
 	  		$('#table-container').html(template.render(data));
+
+            //$('#create-order')[0].reset();
+
+            $('#manicurists-select select')
+                .find('option')
+                .remove();
+
+            $('#time-select select')
+                .find('option')
+                .remove();
+
+            $('#time-select select').attr('disabled', '');
+            $('form#create-order button').attr('disabled', '');
+
+            populateManicuristsList();
+            $('#time-select select').formSelect();
         });
     }
     //Вызываем функцию заполнения таблицы данными о заказах
