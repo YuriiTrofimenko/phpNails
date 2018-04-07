@@ -25,12 +25,21 @@ if (isset($_REQUEST['action'])) {
 				//Запрос создания записи о заказе со страницы index.html (отправлен файлом js/custom/ajax.js)
 				case 'create-order': {
 					//Создаем обхъект Заказ и заполняем его данными из запроса
-					$order = new Order(
+					/*$order = new Order(
 						$_REQUEST['user-name']
 						, $_REQUEST['user-phone']
 						, $_REQUEST['calendar']
 						, $_REQUEST['menu-361']
 						, $_REQUEST['comment']
+					);*/
+					$order = new Order(
+						'-'
+						, '-'
+						, $_REQUEST['date']
+						, $_REQUEST['hours-id']
+						, '-'
+						, 1
+						, $_REQUEST['manicurist-id']
 					);
 					//Пытаемся сохранить запись о заказе в таблицу в БД
 			        $err = $order->intoDb();
@@ -40,7 +49,7 @@ if (isset($_REQUEST['action'])) {
 		                $response = "sql eror: $err";
 			        } else {
 			        	//Если сохранение выполнилось успешно - пмещаем в переменную ответа строку created
-		        		$response = 'created';
+		        		$response = json_encode(['result' => 'created']);
 			        }
 					break;
 				}

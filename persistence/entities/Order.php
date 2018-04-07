@@ -14,25 +14,36 @@ class Order {
     //желаемая дата
     protected $desired_date;
     //желаемое время
-    protected $desired_time;
+    protected $desired_time_id;
     //комментарий
     protected $comment;
+    //
+    protected $status_id;
+    //
+    protected $manicurist_id;
 
     //Конструктор класса с двумя параметрами со значениями по умолчанию в конце списка параметров
-    function __construct($name
+    function __construct(
+        $name
     	, $phone
     	, $desired_date
-    	, $desired_time
+    	, $desired_time_id
     	, $comment
+        , $status_id
+        , $manicurist_id
+
     	, $id = 0
     	, $created_at = '') {
-
-        $this->id = $id;
+        
         $this->name = $name;
         $this->phone = $phone;
         $this->desired_date = $desired_date;
-        $this->desired_time = $desired_time;
+        $this->desired_time_id = $desired_time_id;
         $this->comment = $comment;
+        $this->status_id = $status_id;
+        $this->manicurist_id = $manicurist_id;
+
+        $this->id = $id;
         $this->created_at = $created_at;
     }
 
@@ -44,8 +55,8 @@ class Order {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
             //Готовим sql-запрос добавления строки данных о заказе в таблицу Order
-            $ps = $pdo->prepare("INSERT INTO `Order` (name,phone,desired_date,desired_time,comment)
-                                VALUES (:name,:phone,:desired_date,:desired_time,:comment)");
+            $ps = $pdo->prepare("INSERT INTO `Order` (name, phone, desired_date, desired_time_id, comment, status_id, manicurist_id)
+                                VALUES (:name, :phone, :desired_date, :desired_time_id, :comment, :status_id, :manicurist_id)");
             
             //Превращаем объект в массив
             $ar = get_object_vars($this);
@@ -93,8 +104,10 @@ class Order {
                             $row['name']
                             , $row['phone']
                             , $row['desired_date']
-                            , $row['desired_time']
+                            , $row['desired_time_id']
                             , $row['comment']
+                            , $row['status_id']
+                            , $row['manicurist_id']
                             , $row['id']
                             , $row['created_at']
                         );
@@ -111,6 +124,7 @@ class Order {
     }
 
     //Получение списка всех заказов из БД
+    //or
     static function GetOrders($date = '') {
 
         $ps = null;

@@ -1,6 +1,7 @@
 //Когда документ загрузился в браузер
 $(document).ready(function() {
 
+    //
     Date.prototype.toDateInputValue = (function() {
         var local = new Date(this);
         local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
@@ -140,6 +141,8 @@ $(document).ready(function() {
                 +       '<th>желаемая дата</th>'
                 +       '<th>желаемое время</th>'
                 +       '<th>комментарий</th>'
+                +       '<th>статус</th>'
+                +       '<th>мастер</th>'
                 +       '<th>добавлен</th>'
 				+    '</tr>'
 				+  '</thead>'
@@ -150,8 +153,10 @@ $(document).ready(function() {
 				+               '<td>{{name}}</td>'
                 +               '<td>{{phone}}</td>'
                 +               '<td>{{desired_date}}</td>'
-                +               '<td>{{desired_time}}</td>'
+                +               '<td>{{desired_time_id}}</td>'
                 +               '<td>{{comment}}</td>'
+                +               '<td>{{status_id}}</td>'
+                +               '<td>{{manicurist_id}}</td>'
                 +               '<td>{{created_at}}</td>'
                 +            '</tr>'
 	      		+        '{{/orders}}'
@@ -180,4 +185,35 @@ $(document).ready(function() {
     }
     //Вызываем функцию заполнения таблицы данными о заказах
     populateTable();
+    //
+    $('form#create-order button').click(function(ev){
+
+        ev.preventDefault();
+
+        $.ajax({
+            url: "../api/orders.php",
+            //method : "POST",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'create-order'
+                , 'date': $('#calendar').val()
+                , 'hours-id': $('#time-select select option:selected').val()
+                , 'manicurist-id': $('#manicurists-select select option:selected').val()
+            },
+            cache : false
+        }).done(function(data) {
+
+            console.log(data);
+            //Проверяем, успешно ли выполнено создание записи о заказе
+            if (data.result == 'created') {
+                //Сообщаем пользователю об успешной отправке (далее можно заменить на отображение сообщения в форме)
+                //alert('Заказ успешно добавлен');
+                populateTable();
+            } //Иначе сообщаем об ошибке (далее можно заменить на отображение сообщения в форме)
+            else {
+                alert('Ошибка добавления заказа');
+            }
+        });
+    });
 });
