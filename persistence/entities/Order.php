@@ -142,7 +142,9 @@ class Order {
                 $ps->execute();
             } else {
                 //echo "2 - $date";
-                $ps = $pdo->prepare("SELECT * FROM `Order` WHERE `desired_date` = ? ORDER BY `created_at` DESC");
+                $ps = $pdo->prepare(
+                    "SELECT `o`.`id`, `o`.`name`, `o`.`phone`, `rh`.`hours`, `o`.`comment`, `m`.`name` AS `manicurist_name`, `st`.`status`, `o`.`created_at` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) INNER JOIN `Status` AS `st` ON (`o`.`status_id` = `st`.`id`) WHERE `o`.`desired_date` = ? ORDER BY `o`.`created_at` DESC"
+                    );
                 //Выполняем
                 $ps->execute([$date]);
             }
@@ -159,3 +161,13 @@ class Order {
         }
     }
 }
+
+/*
+
+SELECT `o`.`id`, `o`.`name`, `o`.`phone`, `rh`.`hours`, `o`.`comment`, `m`.`name` AS `manicurist_name`, `st`.`status`, `o`.`created_at`
+FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) INNER JOIN `Status` AS `st` ON (`o`.`status_id` = `st`.`id`)
+WHERE `o`.`desired_date` = '2018-04-09' ORDER BY `o`.`created_at` DESC
+
+SELECT `o`.`id`, `o`.`name`, `o`.`phone`, `rh`.`hours`, `o`.`comment`, `m`.`name` AS `manicurist_name`, `st`.`status`, `o`.`created_at` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) INNER JOIN `Status` AS `st` ON (`o`.`status_id` = `st`.`id`) WHERE `o`.`desired_date` = '2018-04-09' ORDER BY `o`.`created_at` DESC
+
+*/

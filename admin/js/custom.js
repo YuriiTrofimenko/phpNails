@@ -8,6 +8,23 @@ $(document).ready(function() {
         return local.toJSON().slice(0,10);
     });
 
+    //
+    function formatDate(date){
+
+        var pieces = date.split('-');
+        pieces.reverse();
+        var reversed = pieces.join('-');
+        return reversed;
+    }
+
+    function formatDateTime(date){
+
+        var pieces = date.split(' ');
+        pieces[0] = formatDate(pieces[0]);
+        var reversed = pieces.join(' ');
+        return reversed;
+    }
+
     $('#calendar').val(new Date().toDateInputValue());
 
     $('#calendar').change(function() {
@@ -127,6 +144,12 @@ $(document).ready(function() {
             //В ответ получаем json-строку с данными о всех заказах
             //и выводим в отладочную консоль браузера
             //console.log(data);
+            $.each(data.orders, function(index, value) {
+                
+                //data.orders[index].desired_date = formatDate(value.desired_date);
+                //formatDateTime
+                data.orders[index].created_at = formatDateTime(value.created_at);
+            });
 
             //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
             //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
@@ -138,11 +161,10 @@ $(document).ready(function() {
 				+      '<th>ID</th>'
 				+       '<th>имя</th>'
                 +       '<th>телефон</th>'
-                +       '<th>желаемая дата</th>'
                 +       '<th>желаемое время</th>'
                 +       '<th>комментарий</th>'
-                +       '<th>статус</th>'
                 +       '<th>мастер</th>'
+                +       '<th>статус</th>'
                 +       '<th>добавлен</th>'
 				+    '</tr>'
 				+  '</thead>'
@@ -152,11 +174,10 @@ $(document).ready(function() {
 				+   			'<th scope="row">{{id}}</th>'
 				+               '<td>{{name}}</td>'
                 +               '<td>{{phone}}</td>'
-                +               '<td>{{desired_date}}</td>'
-                +               '<td>{{desired_time_id}}</td>'
+                +               '<td>{{hours}}</td>'
                 +               '<td>{{comment}}</td>'
-                +               '<td>{{status_id}}</td>'
-                +               '<td>{{manicurist_id}}</td>'
+                +               '<td>{{manicurist_name}}</td>'
+                +               '<td>{{status}}</td>'
                 +               '<td>{{created_at}}</td>'
                 +            '</tr>'
 	      		+        '{{/orders}}'
@@ -165,6 +186,11 @@ $(document).ready(function() {
 	  		);
 		  	//Заполняем шаблон данными и помещаем на веб-страницу
 	  		$('#table-container').html(template.render(data));
+
+            //
+            $("table td:contains('забронирован')").parent().addClass("BlueRow");
+            $("table td:contains('выполнен')").parent().addClass("GreenRow");
+            $("table td:contains('отменен')").parent().addClass("RedRow");
 
             //$('#create-order')[0].reset();
 
