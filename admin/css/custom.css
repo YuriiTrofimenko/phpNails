@@ -1,0 +1,15 @@
+/*.container {
+    width: 100%;
+    max-width: initial;
+}
+.container > .row {
+    width: 100%;
+    max-width: initial;
+    margin: 0;
+}
+.container > .row > .col {
+    width: 100%;
+    max-width: initial;
+    margin: 0;
+    padding: 0;
+}*/

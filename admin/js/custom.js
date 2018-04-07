@@ -1,5 +1,19 @@
 //Когда документ загрузился в браузер
 $(document).ready(function() {
+
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0,10);
+    });
+
+    $('#calendar').val(new Date().toDateInputValue());
+
+    $('#calendar').change(function() {
+      
+        populateTable();
+    });
+
     //Готовим функцию заполнения таблицы данными о заказах
     function populateTable() {
     	//Отправляем асинхронный запрос на сервер (в файл api/orders.php)
@@ -9,7 +23,8 @@ $(document).ready(function() {
             dataType: 'json',
             type: "POST",
             data: { 
-		        'action': 'fetch-all-orders'
+		        'action': 'fetch-orders'
+                , 'date': $('#calendar').val()
 		    },
             cache : false
         }).done(function(data) {

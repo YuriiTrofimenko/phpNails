@@ -8,11 +8,9 @@ if (isset($_REQUEST['action'])) {
 		//Создаем переменную с ответом по умолчанию
 		$response = "no results";
 		//Подключаем файл работы с БД
-
 		require_once('../persistence/db_connector.php');
-
-		require_once('../persistence/entities/Order.php');
-
+		//Подключаем файл работы с БД
+		require_once('../persistence/entities/Manicurist.php'); 
 
 		//Если связь с БД установлена
 		if (getDbContext()) {
@@ -23,7 +21,7 @@ if (isset($_REQUEST['action'])) {
 			//Действуем далее в зависимости от этого значения
 			switch ($action) {
 				//Запрос создания записи о заказе со страницы index.html (отправлен файлом js/custom/ajax.js)
-				case 'create-order': {
+				/*case 'create-order': {
 					//Создаем обхъект Заказ и заполняем его данными из запроса
 					$order = new Order(
 						$_REQUEST['user-name']
@@ -43,13 +41,13 @@ if (isset($_REQUEST['action'])) {
 		        		$response = 'created';
 			        }
 					break;
-				}
+				}*/
 				//Запрос создания записи о заказе со страницы admin/index.html (отправлен файлом admin/js/custom.js)
-				case 'fetch-orders': {
+				case 'fetch-available-manicurists': {
 					//Получаем из БД список заказов в виде многомерного массива
-			        $orders = Order::GetOrders($_REQUEST['date']);
+			        $manicurists = Manicurist::GetAvailableManicurists($_REQUEST['calendar']);
 			        //Кодируем его в формат json и сохраняем в переменную ответа
-	        		$response = json_encode(['orders' => $orders]);
+	        		$response = json_encode(['manicurists' => $manicurists]);
 					break;
 				}
 				
