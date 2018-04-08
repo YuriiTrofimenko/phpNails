@@ -151,7 +151,7 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
             //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Hour,
             //отсортированных от более новых к более старым
             $ps = $pdo->prepare(
-                "SELECT `m`.`id`, `m`.`name`, `rh`.`hours` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) WHERE `m`.`id` = ? AND `o`.`desired_date` = ? AND `o`.`status_id` = 1"
+                "SELECT `rh`.`id`, `rh`.`hours` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) WHERE `m`.`id` = ? AND `o`.`desired_date` = ? AND `o`.`status_id` = 1"
                 );
 
             //Выполняем

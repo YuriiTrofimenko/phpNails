@@ -9,6 +9,14 @@ $(document).ready(function () {
 
     $('#calendar').val(new Date().toDateInputValue());
 
+    var minDate = new Date();
+    var maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 7);
+    $('#calendar').attr({
+       "min" : minDate.toDateInputValue(),
+       "max" : maxDate.toDateInputValue()
+    });
+
     $('#calendar').change(function() {
       
         populateManicuristsList();
@@ -53,6 +61,7 @@ $(document).ready(function () {
             $('#manicurists-select select').change(function() {
 
                 //console.log($(this).val());
+                $('#time-select select').removeAttr('disabled');
                 populateTimeList();
             });
 
@@ -116,7 +125,7 @@ $(document).ready(function () {
         var $inputs = $form.find("input, select, button, textarea");
 
         //Подготавливаем данные к отправке
-        var serializedData = $form.serialize();
+        //var serializedData = $form.serialize();
 
         //Отключаем поля ввода формы на время отправки запроса
         $inputs.prop("disabled", true);
@@ -126,15 +135,25 @@ $(document).ready(function () {
             url: "api/orders.php",
             //method : "post",
             type: "POST",
-            data: serializedData,
+            dataType: 'json',
+            //data: serializedData,
+            data: { 
+                'action': 'book-order'
+                , 'date': $('#calendar').val()
+                , 'manicurist-id': $('#manicurists-select select option:selected').val()
+                , 'hours-id': $('#time-select select option:selected').val()
+                , 'user-name': $('#user-name').val()
+                , 'user-phone': $('#user-phone').val()
+                , 'comment': $('#comment').val()
+            },
             cache : false
         }).done(function(data) {
             
             //Если ответ от сервера получен -
             //выводим его для отладки в консоль браузера
-            console.log(data);
+            console.log(data.result);
             //Проверяем, успешно ли выполнено создание записи о заказе
-            if (data == 'created') {
+            if (data.result == 'booked') {
                 //Сообщаем пользователю об успешной отправке (далее можно заменить на отображение сообщения в форме)
                 alert('Заказ успешно добавлен');
                 //Очищаем поля формы
@@ -145,6 +164,9 @@ $(document).ready(function () {
             }
             //Делаем поля ввода формы снова активными
             $inputs.prop("disabled", false);
+            $('#manicurists-select select').attr('disabled', '');
+            $('#time-select select').attr('disabled', '');
+            $('form#create-order button').attr('disabled', '');
         });
     });
 });

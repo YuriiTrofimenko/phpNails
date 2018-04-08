@@ -204,7 +204,7 @@
                                 Желаемая дата*
                             </h3>
                             <div style=" position: absolute;top: 120px; right:549px;">
-                                <input id="calendar" name="calendar" type="date" value="2012-06-01"/>
+                                <input id="calendar" name="calendar" type="date"/>
                             </div>
                             <h3 style="margin-top: 165px;">
                                 Мастер:
@@ -219,9 +219,9 @@
                             <h3 style="margin-top: 235px;">
                                 Желаемое время*
                             </h3>
-                            <div style="position: absolute;top: 260px; right:549px;">
+                            <div id="time-select" style="position: absolute;top: 260px; right:549px;">
                                 <span class="wpcf7-form-control-wrap menu-361">
-                                    <select id="time-select" aria-invalid="false" class="wpcf7-form-control wpcf7-select contact-menu" disabled="" id="id-contact-menu-361" name="menu-361">
+                                    <select aria-invalid="false" class="wpcf7-form-control wpcf7-select contact-menu" disabled="" id="id-contact-menu-361" name="menu-361">
                                         <option disabled="" selected="" value="">
                                             Выбор времени
                                         </option>
@@ -237,10 +237,9 @@
                                 </div>
                             </div>
                             <div class="blocks5">
-                                <textarea name="comment" placeholder="Ваш комментарий" rows="3">
-                                </textarea>
+                                <textarea id="comment" name="comment" placeholder="Ваш комментарий" rows="3"></textarea>
                             </div>
-                            <input name="action" type="hidden" value="create-order"/>
+                            <!-- <input name="action" type="hidden" value="create-order"/> -->
                             <div class="kn4">
                                 <button disabled class="btn" type="submit">
                                     Отправить

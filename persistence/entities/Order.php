@@ -81,6 +81,39 @@ class Order {
         }
     }
 
+    function updateDb() {
+
+        try {
+            //Получаем контекст для работы с БД
+            $pdo = getDbContext();
+            //Готовим sql-запрос добавления строки данных о заказе в таблицу Order
+            $ps = $pdo->prepare(
+                "UPDATE `Order` SET `name`=:name,`phone`=:phone,`comment`=:comment, `status_id` = :status_id WHERE `desired_date` = :desired_date AND `manicurist_id` = :manicurist_id AND `desired_time_id` = :desired_time_id"
+                );
+            
+            //Превращаем объект в массив
+            $ar = get_object_vars($this);
+            //Удаляем из него первые два элемента - id и created_at
+            array_shift($ar);
+            array_shift($ar);
+            
+            //выполняем запрос к БД для добавления записи
+            $ps->execute($ar);
+        } catch (PDOException $e) {
+
+            $err = $e->getMessage();
+
+            if (substr($err, 0, strrpos($err, ":")) == 'SQLSTATE[23000]:Integrity constraint violation') {
+
+                return 1062;
+
+            } else {
+
+                return $e->getMessage();
+            }
+        }
+    }
+
     //DB -> object
     //Чтение одного заказа из БД (сейчас не используется, но может понадобиться в будущем)
     static function fromDB($id) {
