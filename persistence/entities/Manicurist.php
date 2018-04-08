@@ -136,7 +136,7 @@ WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
             $pdo = getDbContext();
             //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Manicurist,
             //отсортированных от более новых к более старым
-            $ps = $pdo->prepare("SELECT `m`.`id`, `m`.`name` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `o`.`desired_date` = ? AND `o`.`status_id` = 1");
+            $ps = $pdo->prepare("SELECT DISTINCT `m`.`id`, `m`.`name` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `o`.`desired_date` = ? AND `o`.`status_id` = 1");
 
             //Выполняем
             $ps->execute([$date]);

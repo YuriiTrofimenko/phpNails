@@ -1,5 +1,108 @@
 $(document).ready(function () {
 
+    //
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0,10);
+    });
+
+    $('#calendar').val(new Date().toDateInputValue());
+
+    $('#calendar').change(function() {
+      
+        populateManicuristsList();
+    });
+
+    //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+    function populateManicuristsList() {
+        $.ajax({
+            url: "../api/manicurists.php",
+            //method : "POST",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'fetch-available-manicurists'
+                , 'date': $('#calendar').val()
+            },
+            cache : false
+        }).done(function(data) {
+            
+            //В ответ получаем json-строку с данными о всех заказах
+            //и выводим в отладочную консоль браузера
+            //console.log(data);
+
+            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
+            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
+            //далее можно форматировать при помощи js)
+            var template = Hogan.compile(
+                '<option disabled="" selected="" value="">Выбор мастера</option>'
+                +'{{#manicurists}}'                
+                +   '<option value="{{id}}">'
+                +       '{{name}}'
+                +   '</option>'
+                +'{{/manicurists}}'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+            $('#manicurists-select select').html(template.render(data));
+
+            $('#manicurists-select select').removeAttr('disabled');
+
+            $('#manicurists-select select').unbind("change");
+            //
+            $('#manicurists-select select').change(function() {
+
+                //console.log($(this).val());
+                populateTimeList();
+            });
+
+            //populateTimeList();
+        });
+    }
+    populateManicuristsList();
+
+    //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+    function populateTimeList() {
+        $.ajax({
+            url: "../api/hours.php",
+            //method : "POST",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'get-available-hours'
+                , 'manicurist-id': $('#manicurists-select select option:selected').val()
+                , 'date': $('#calendar').val()
+            },
+            cache : false
+        }).done(function(data) {
+            
+            //В ответ получаем json-строку с данными о всех заказах
+            //и выводим в отладочную консоль браузера
+            //console.log(data);
+
+            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
+            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
+            //далее можно форматировать при помощи js)
+            var template = Hogan.compile(
+                '<option disabled="" selected="" value="">Выбор времени</option>'
+                +'{{#hours}}'                
+                +   '<option value="{{id}}">'
+                +       '{{hours}}'
+                +   '</option>'
+                +'{{/hours}}'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+            $('#time-select select').html(template.render(data));
+            //
+            $('#time-select select').unbind("change");
+            //
+            $('#time-select select').change(function() {
+
+                $('form#create-order button').removeAttr('disabled');
+            });
+        });
+    }
+
     //Обработчик события "отправка формы заказа"
     $('#create-order').submit(function (ev) {
 

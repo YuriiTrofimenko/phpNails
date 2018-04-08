@@ -53,7 +53,7 @@ if (isset($_REQUEST['action'])) {
 				//Запрос создания записи о заказе со страницы admin/index.html (отправлен файлом admin/js/custom.js)
 				case 'fetch-available-manicurists': {
 					//Получаем из БД список заказов в виде многомерного массива
-			        $manicurists = Manicurist::GetAvailableManicurists($_REQUEST['calendar']);
+			        $manicurists = Manicurist::GetAvailableManicurists($_REQUEST['date']);
 			        //Кодируем его в формат json и сохраняем в переменную ответа
 	        		$response = json_encode(['manicurists' => $manicurists]);
 					break;
