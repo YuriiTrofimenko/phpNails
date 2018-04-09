@@ -21,7 +21,7 @@ if (isset($_REQUEST['action'])) {
 		
 			//Действуем далее в зависимости от этого значения
 			switch ($action) {
-				//Запрос создания записи о заказе со страницы index.html (отправлен файлом js/custom/ajax.js)
+				//Запрос создания записи о заказе, отправленный со страницы admin/index.html (отправлен файлом admin/js/custom.js)
 				case 'create-order': {
 					//Создаем обхъект Заказ и заполняем его данными из запроса
 					//(вызывается со страницы администрирования при формировании расписания,
@@ -47,16 +47,10 @@ if (isset($_REQUEST['action'])) {
 			        }
 					break;
 				}
-				//Запрос создания записи о заказе со страницы index.html (отправлен файлом js/custom/ajax.js)
+				//Запрос бронирования заказа, отправленный со страницы index.html (отправлен файлом js/custom/ajax.js)
 				case 'book-order': {
-					//Создаем обхъект Заказ и заполняем его данными из запроса
-					/*$order = new Order(
-						$_REQUEST['user-name']
-						, $_REQUEST['user-phone']
-						, $_REQUEST['calendar']
-						, $_REQUEST['menu-361']
-						, $_REQUEST['comment']
-					);*/
+					//Создаем обхъект Заказ и заполняем его данными из запроса,
+					//в поле "идентификатор статуса" заносится 2 - строка состояния "забронирован" из таблицы статусов в БД)
 					$order = new Order(
 						$_REQUEST['user-name']
 						, $_REQUEST['user-phone']
@@ -66,7 +60,7 @@ if (isset($_REQUEST['action'])) {
 						, 2
 						, $_REQUEST['manicurist-id']
 					);
-					//Пытаемся сохранить запись о заказе в таблицу в БД
+					//Пытаемся обновить запись о заказе в таблицу в БД
 			        $err = $order->updateDb();
 			        //Если при этом произошла ошибка
 			        if ($err) {
@@ -78,7 +72,8 @@ if (isset($_REQUEST['action'])) {
 			        }
 					break;
 				}
-				//Запрос создания записи о заказе со страницы admin/index.html (отправлен файлом admin/js/custom.js)
+				//Запрос на получение всех записей о заказах за указанную дату,
+				//отправленный со страницы admin/index.html (отправлен файлом admin/js/custom.js)
 				case 'fetch-orders': {
 					//Получаем из БД список заказов в виде многомерного массива
 			        $orders = Order::GetOrders($_REQUEST['date']);
@@ -99,13 +94,11 @@ if (isset($_REQUEST['action'])) {
 		}
 	} catch (Exception $e) {
 
-            $response = $e->getMessage();
+		//Помещаем в переменную ответа текст непредвиденной ошибки,
+		//если она произойдет, и выполнится этот блок
+        $response = $e->getMessage();
     }
     //Отправляем в браузер то, что получилось в переменной ответа
     //(данные / сообщение об успешном выполнении / об ошибке)
 	echo $response;
 }
-//var_dump($_REQUEST);
-/*
-UPDATE `Order` SET `name`='n1',`phone`='p1',`comment`='c1', `status_id` = 2 WHERE `desired_date` = '2018-04-09' AND `manicurist_id` = 2 AND `desired_time_id` = 3;
-*/

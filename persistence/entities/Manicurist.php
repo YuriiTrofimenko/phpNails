@@ -1,6 +1,5 @@
 <?php
-/*Сущности*/
-//Заказ
+//Сущность Заказ
 class Manicurist {
 
     //уникальный id - будет генерироваться БД при вставке строки
@@ -8,7 +7,7 @@ class Manicurist {
     //имя заказчика
     protected $name;
 
-    //Конструктор класса с двумя параметрами со значениями по умолчанию в конце списка параметров
+    //Конструктор класса с одним параметром со значением по умолчанию
     function __construct(
         $name
     	, $id = 0
@@ -25,13 +24,13 @@ class Manicurist {
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос добавления строки данных о заказе в таблицу Manicurist
+            //Готовим sql-запрос добавления строки данных о мастере в таблицу Manicurist
             $ps = $pdo->prepare("INSERT INTO `Manicurist` (name)
                                 VALUES (:name)");
             
             //Превращаем объект в массив
             $ar = get_object_vars($this);
-            //Удаляем из него первые два элемента - id и created_at
+            //Удаляем из него первый элемент - id
             array_shift($ar);
             
             //выполняем запрос к БД для добавления записи
@@ -56,26 +55,11 @@ class Manicurist {
     static function fromDB($id) {
 
         $manicurist = null;
-//SELECT * FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE 1
-
-/*
-SELECT `m`.`id`, `m`.`name`
-FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`)
-WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-
-SELECT `m`.`id`, `m`.`name` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-SELECT `m`.`id`, `m`.`name`, `rh`.`hours`
-FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`)
-WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-*/
 
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения строки данных о заказе из таблицы Manicurist
+            //Готовим sql-запрос чтения строки данных о мастере из таблицы Manicurist
             $ps = $pdo->prepare("SELECT * FROM `Manicurist` WHERE id = ?");
             
             //Пытаемся выполнить запрос на получение данных
@@ -100,7 +84,7 @@ WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
         }
     }
 
-    //Получение списка всех заказов из БД
+    //Получение списка всех мастеров из БД
     static function GetManicurists() {
 
         $ps = null;
@@ -109,8 +93,7 @@ WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Manicurist,
-            //отсортированных от более новых к более старым
+            //Готовим sql-запрос чтения всех строк данных о мастерах из таблицы Manicurist
             $ps = $pdo->prepare("SELECT * FROM `Manicurist`");
             //Выполняем
             $ps->execute();
@@ -125,7 +108,7 @@ WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
         }
     }
 
-    //Получение списка всех заказов из БД
+    //Получение списка всех мастеров, доступных на указанную дату
     static function GetAvailableManicurists($date) {
 
         $ps = null;
@@ -134,8 +117,8 @@ WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Manicurist,
-            //отсортированных от более новых к более старым
+            //Готовим sql-запрос чтения всех строк данных о мастерах из таблицы Manicurist,
+            //строки заданий для которых присутствуют на указанную дату, и статус строк заказов "1" указывает, что они еще не забронированы
             $ps = $pdo->prepare("SELECT DISTINCT `m`.`id`, `m`.`name` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `o`.`desired_date` = ? AND `o`.`status_id` = 1");
 
             //Выполняем

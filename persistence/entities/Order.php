@@ -1,6 +1,5 @@
 <?php
-/*Сущности*/
-//Заказ
+//Сущность Заказ (или задание, установленное в админпанели)
 class Order {
 
     //уникальный id - будет генерироваться БД при вставке строки
@@ -13,13 +12,13 @@ class Order {
     protected $phone;
     //желаемая дата
     protected $desired_date;
-    //желаемое время
+    //желаемое время - внешний ключ
     protected $desired_time_id;
     //комментарий
     protected $comment;
-    //
+    //статус заказа - внешний ключ
     protected $status_id;
-    //
+    //мастер - внешний ключ
     protected $manicurist_id;
 
     //Конструктор класса с двумя параметрами со значениями по умолчанию в конце списка параметров
@@ -54,13 +53,13 @@ class Order {
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос добавления строки данных о заказе в таблицу Order
+            //Готовим sql-запрос добавления строки данных о задании в таблицу Order
             $ps = $pdo->prepare("INSERT INTO `Order` (name, phone, desired_date, desired_time_id, comment, status_id, manicurist_id)
                                 VALUES (:name, :phone, :desired_date, :desired_time_id, :comment, :status_id, :manicurist_id)");
             
             //Превращаем объект в массив
             $ar = get_object_vars($this);
-            //Удаляем из него первые два элемента - id и created_at
+            //Удаляем из него первые два элемента - id и created_at, потому что их создаст СУБД
             array_shift($ar);
             array_shift($ar);
             
@@ -80,13 +79,13 @@ class Order {
             }
         }
     }
-
+    //Обновление данных в БД - бронирование
     function updateDb() {
 
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос добавления строки данных о заказе в таблицу Order
+            //Готовим sql-запрос обновления строки данных о заказе в таблицу Order
             $ps = $pdo->prepare(
                 "UPDATE `Order` SET `name`=:name,`phone`=:phone,`comment`=:comment, `status_id` = :status_id WHERE `desired_date` = :desired_date AND `manicurist_id` = :manicurist_id AND `desired_time_id` = :desired_time_id"
                 );
@@ -157,7 +156,8 @@ class Order {
     }
 
     //Получение списка всех заказов из БД
-    //or
+    //или
+    //для указанной даты (используется для заполнения таблицы расписания)
     static function GetOrders($date = '') {
 
         $ps = null;
@@ -169,12 +169,14 @@ class Order {
             //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Order,
             //отсортированных от более новых к более старым
             if ($date === '') {
-                //echo "1 - $date";
+                
                 $ps = $pdo->prepare("SELECT * FROM `Order` ORDER BY `created_at` DESC");
                 //Выполняем
                 $ps->execute();
             } else {
-                //echo "2 - $date";
+                //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Order,
+                //и связанных с нею,
+                //отсортированных от более новых к более старым
                 $ps = $pdo->prepare(
                     "SELECT `o`.`id`, `o`.`name`, `o`.`phone`, `rh`.`hours`, `o`.`comment`, `m`.`name` AS `manicurist_name`, `st`.`status`, `o`.`created_at` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) INNER JOIN `Status` AS `st` ON (`o`.`status_id` = `st`.`id`) WHERE `o`.`desired_date` = ? ORDER BY `o`.`created_at` DESC"
                     );
@@ -182,7 +184,6 @@ class Order {
                 $ps->execute([$date]);
             }
 
-            
             //Сохраняем полученные данные в ассоциативный массив
             $orders = $ps->fetchAll();
 
@@ -194,13 +195,3 @@ class Order {
         }
     }
 }
-
-/*
-
-SELECT `o`.`id`, `o`.`name`, `o`.`phone`, `rh`.`hours`, `o`.`comment`, `m`.`name` AS `manicurist_name`, `st`.`status`, `o`.`created_at`
-FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) INNER JOIN `Status` AS `st` ON (`o`.`status_id` = `st`.`id`)
-WHERE `o`.`desired_date` = '2018-04-09' ORDER BY `o`.`created_at` DESC
-
-SELECT `o`.`id`, `o`.`name`, `o`.`phone`, `rh`.`hours`, `o`.`comment`, `m`.`name` AS `manicurist_name`, `st`.`status`, `o`.`created_at` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) INNER JOIN `Status` AS `st` ON (`o`.`status_id` = `st`.`id`) WHERE `o`.`desired_date` = '2018-04-09' ORDER BY `o`.`created_at` DESC
-
-*/

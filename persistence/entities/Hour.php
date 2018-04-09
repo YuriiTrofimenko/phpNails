@@ -1,14 +1,13 @@
 <?php
-/*Сущности*/
-//Заказ
+//Сущность Заказ
 class Hour {
 
     //уникальный id - будет генерироваться БД при вставке строки
     protected $id;
-    //имя заказчика
+    //название диапазона времени
     protected $hours;
 
-    //Конструктор класса с двумя параметрами со значениями по умолчанию в конце списка параметров
+    //Конструктор
     function __construct(
         $hour
     	, $id = 0
@@ -25,13 +24,13 @@ class Hour {
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос добавления строки данных о заказе в таблицу ReceptionHours
+            //Готовим sql-запрос добавления строки в таблицу ReceptionHours
             $ps = $pdo->prepare("INSERT INTO `ReceptionHours` (hours)
                                 VALUES (:hours)");
             
             //Превращаем объект в массив
             $ar = get_object_vars($this);
-            //Удаляем из него первые два элемента - id и created_at
+            //Удаляем из него первый элемент - id
             array_shift($ar);
             
             //выполняем запрос к БД для добавления записи
@@ -52,44 +51,15 @@ class Hour {
     }
 
     //DB -> object
-    //Чтение одного заказа из БД (сейчас не используется, но может понадобиться в будущем)
+    //Чтение одного периода из БД (сейчас не используется, но может понадобиться в будущем)
     static function fromDB($id) {
 
         $Hour = null;
-//SELECT * FROM `Hour`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`Hour_id`) WHERE 1
-
-/*
-SELECT `m`.`id`, `m`.`hour`
-FROM `Hour`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`Hour_id`)
-WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-
-SELECT `m`.`id`, `m`.`hour` FROM `Hour`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`Hour_id`) WHERE `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-//часы, для которых уже созданы заказы для определенной даты и мастера, но еще не забронированы
-SELECT `m`.`id`, `m`.`name`, `rh`.`hours`
-FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`)
-WHERE `m`.`id` = 1 AND `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-//часы, для которых еще не созданы заказы для определенной даты и мастера
-SELECT `rh`.`hours`
-FROM `ReceptionHours` AS `rh`
-WHERE NOT EXISTS(
-        SELECT `rh`.`id`
-        FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`)
-        WHERE `m`.`id` = 1 AND `o`.`desired_date` = '2018-04-02' AND `rh`.`id` = `o`.`desired_time_id`
-    );
-
-SELECT `m`.`id`, `m`.`name`, `rh`.`hours` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) WHERE `m`.`id` = 1 AND `o`.`desired_date` = '2018-04-02' AND `o`.`status_id` = 1
-
-SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`id` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `m`.`id` = 1 AND `o`.`desired_date` = '2018-04-02' AND `rh`.`id` = `o`.`desired_time_id`);
-
-*/
 
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения строки данных о заказе из таблицы Hour
+            //Готовим sql-запрос чтения строки данных о периоде из таблицы Hour
             $ps = $pdo->prepare("SELECT * FROM `ReceptionHours` WHERE id = ?");
             
             //Пытаемся выполнить запрос на получение данных
@@ -114,7 +84,7 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
         }
     }
 
-    //Получение списка всех заказов из БД
+    //Получение списка всех периодов из БД
     static function GetHours() {
 
         $ps = null;
@@ -123,8 +93,7 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения всех строк данных о заказах из таблицы ReceptionHours,
-            //отсортированных от более новых к более старым
+            //Готовим sql-запрос чтения всех строк данных о периодах из таблицы ReceptionHours
             $ps = $pdo->prepare("SELECT * FROM `ReceptionHours`");
             //Выполняем
             $ps->execute();
@@ -139,7 +108,8 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
         }
     }
 
-    //Получение списка всех заказов из БД
+    //Получение списка всех периодов из БД, для которых созданы строки заданий
+    //для указанных мастера и даты
     static function GetAvailableHours($manicurist_id, $date) {
 
         $ps = null;
@@ -148,8 +118,8 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Hour,
-            //отсортированных от более новых к более старым
+            //Готовим sql-запрос чтения всех строк данных о периодах из таблицы Hour,
+            //для указанных мастера и даты, еще не переведенных в состояние "забронировано" - статус заказа "1"
             $ps = $pdo->prepare(
                 "SELECT `rh`.`id`, `rh`.`hours` FROM `Manicurist` AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) INNER JOIN `ReceptionHours` AS `rh` ON (`rh`.`id` = `o`.`desired_time_id`) WHERE `m`.`id` = ? AND `o`.`desired_date` = ? AND `o`.`status_id` = 1"
                 );
@@ -168,7 +138,8 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
         }
     }
 
-    //Получение списка всех заказов из БД
+    //Получение списка всех периодов из БД, для которых для указанных мастера и даты
+    //еще не созданы строки заданий
     static function GetFreeHours($manicurist_id, $date) {
 
         $ps = null;
@@ -177,8 +148,7 @@ SELECT `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`
         try {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
-            //Готовим sql-запрос чтения всех строк данных о заказах из таблицы Hour,
-            //отсортированных от более новых к более старым
+            //Готовим sql-запрос чтения
             $ps = $pdo->prepare(
                 "SELECT `rh`.`id`, `rh`.`hours` FROM `ReceptionHours` AS `rh` WHERE NOT EXISTS(SELECT `rh`.`id` FROM `Manicurist`AS `m` INNER JOIN `Order` AS `o` ON (`m`.`id` = `o`.`manicurist_id`) WHERE `m`.`id` = ? AND `o`.`desired_date` = ? AND `rh`.`id` = `o`.`desired_time_id`);"
                 );
