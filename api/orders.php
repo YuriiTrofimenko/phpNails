@@ -81,6 +81,20 @@ if (isset($_REQUEST['action'])) {
 	        		$response = json_encode(['orders' => $orders]);
 					break;
 				}
+				//
+				case 'update-order-status': {
+					//
+			        $err = Order::updateOrderStatus($_REQUEST['order-id'], $_REQUEST['status-id']);
+
+			        if ($err) {
+			            //Помещаем в переменную ответа текст ошибки
+		                $response = "sql eror: $err";
+			        } else {
+			        	//
+		        		$response = json_encode(['result' => 'updated']);
+			        }
+					break;
+				}
 				
 				default: {
 					

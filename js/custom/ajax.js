@@ -25,7 +25,7 @@ $(document).ready(function () {
     //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
     function populateManicuristsList() {
         $.ajax({
-            url: "../api/manicurists.php",
+            url: "api/manicurists.php",
             //method : "POST",
             dataType: 'json',
             type: "POST",
@@ -73,7 +73,7 @@ $(document).ready(function () {
     //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
     function populateTimeList() {
         $.ajax({
-            url: "../api/hours.php",
+            url: "api/hours.php",
             //method : "POST",
             dataType: 'json',
             type: "POST",

@@ -263,6 +263,34 @@ $(document).ready(function() {
         } else {
 
             console.log($('.selectedTableRow').find('th').text());
+            var orderId = $('.selectedTableRow').find('th').text();
+
+            $.ajax({
+                url: "../api/orders.php",
+                //method : "post",
+                type: "POST",
+                dataType: 'json',
+                //data: serializedData,
+                data: { 
+                    'action': 'update-order-status'
+                    , 'order-id' : orderId
+                    , 'status-id': '3'
+                },
+                cache : false
+            }).done(function(data) {
+                
+                //Если ответ от сервера получен -
+                //выводим его для отладки в консоль браузера
+                console.log(data.result);
+                //Проверяем, успешно ли выполнено создание записи о заказе
+                if (data.result == 'updated') {
+                    
+                    populateTable();
+                } //Иначе сообщаем об ошибке (далее можно заменить на отображение сообщения в форме)
+                else {
+                    alert('Ошибка изменения статуса');
+                }
+            });
         }
 
         

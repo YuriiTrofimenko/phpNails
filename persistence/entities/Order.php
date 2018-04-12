@@ -125,7 +125,7 @@ class Order {
                 );
             
             //выполняем запрос к БД
-            $ps->execute([$orderId, $newStatus]);
+            $ps->execute([$newStatus, $orderId]);
         } catch (PDOException $e) {
 
             $err = $e->getMessage();
