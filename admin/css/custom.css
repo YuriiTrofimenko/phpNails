@@ -2,8 +2,12 @@ tr.BlueRow {background-color:#99CCFF;}
 tr.GreenRow {background-color:#CCFFCC;}
 tr.RedRow {background-color:#FFCCCC;}
 
-#cancelOrder, #deleteOrder{
+#doneOrder, #cancelOrder, #deleteOrder{
 	margin-bottom: 5px;
+}
+
+.selectedTableRow{
+    color: #26a69a;
 }
 
 /*.container {

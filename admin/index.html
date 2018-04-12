@@ -64,18 +64,7 @@
                                 </input>
                             </form>
                         </div>
-                        <div class="col s6">
-                            <div class="card horizontal">
-                              <div class="card-stacked">
-                                <div class="card-content">
-                                    <form>
-                                        <button id="cancelOrder" class="waves-effect waves-light btn" type="button">Отмена</button>
-                                        <button id="deleteOrder" class="waves-effect waves-light btn" type="button">Удаление</button>
-                                    </form>
-                                </div>
-                              </div>
-                            </div>
-                        </div>
+                        
                         <!-- <div class="col s12 m2 l2 xl2">
                             <form>
                                 <button class="waves-effect waves-light btn" type="button">Cancel</button>
@@ -87,8 +76,28 @@
                             </form>
                         </div> -->
                     </div>
+
                     <!-- Сюда при помощи jquery помещается шаблон, заполненный данными о заказах -->
-                    <div id="table-container">
+                    <div class="row">
+                        <div class="col s12 m12 l12 xl12">
+                            <div id="table-container">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12 m12 l12 xl12">
+                            <div class="card horizontal">
+                              <div class="card-stacked">
+                                <div class="card-content">
+                                    <form>
+                                        <button id="doneOrder" class="waves-effect waves-light btn" type="button">Выполнен</button>
+                                        <button id="cancelOrder" class="waves-effect waves-light btn" type="button">Отмена</button>
+                                        <button id="deleteOrder" class="waves-effect waves-light btn" type="button">Удаление</button>
+                                    </form>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

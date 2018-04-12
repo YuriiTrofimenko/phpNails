@@ -128,6 +128,7 @@ $(document).ready(function() {
 
     //Готовим функцию заполнения таблицы данными о заказах
     function populateTable() {
+        $('#table-container').html("<div class='progress'><div class='indeterminate'></div></div>");
     	//Отправляем асинхронный запрос на сервер (в файл api/orders.php)
     	$.ajax({
             url: "../api/orders.php",
@@ -192,6 +193,15 @@ $(document).ready(function() {
             $("table td:contains('выполнен')").parent().addClass("GreenRow");
             $("table td:contains('отменен')").parent().addClass("RedRow");
 
+            $("#doneOrder, #cancelOrder, #deleteOrder").attr('disabled', '');
+
+            $("table tr:not(:first)").unbind("click");
+            $("table tr:not(:first)").click(function(){
+
+                //console.log($(this));
+                $("#doneOrder, #cancelOrder, #deleteOrder").removeAttr('disabled');
+                $(this).addClass("selectedTableRow").siblings().removeClass("selectedTableRow");
+            });
             //$('#create-order')[0].reset();
 
             $('#manicurists-select select')
@@ -241,6 +251,21 @@ $(document).ready(function() {
                 alert('Ошибка добавления заказа');
             }
         });
+    });
+
+    $('#doneOrder').click(function(ev){
+
+        ev.preventDefault();
+
+        if ($('.selectedTableRow').find('th').length === 0) {
+
+            alert('Сначала выберите одну строку в таблице');
+        } else {
+
+            console.log($('.selectedTableRow').find('th').text());
+        }
+
+        
     });
 
     $('#cancelOrder').click(function(ev){
