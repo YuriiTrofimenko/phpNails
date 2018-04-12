@@ -1185,6 +1185,31 @@ color: #3f1e14;
     font-family: 'Conv_MyriadProRegular';
     color: #ed724c;
 }
+.zo #table-container{
+	color: #fb9474;
+    position: absolute;
+    font-family: 'Conv_MyriadProRegular';
+    font-size: 16px;
+    margin-left: 525px;
+    margin-top: 115px;
+}
+
+.zo #table-container h3{
+    font-size: 16px !important;
+    margin-bottom: 10px !important;
+    margin-top: 0px !important;
+}
+
+.zo #table-container table{
+    border-style: solid;
+    border-color: #fb9474;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    display: block;
+}
+
 .blocks4{
 	position: absolute;
     top: 299px;
