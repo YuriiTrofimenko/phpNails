@@ -6,7 +6,7 @@ if (isset($_REQUEST['action'])) {
 	try {
 
 		//Создаем переменную с ответом по умолчанию
-		$response =  json_encode(['result' => 'no-results']);;
+		$response =  json_encode(['result' => 'no-results']);
 		//Подключаем файл работы с БД
 		require_once('../persistence/db_connector.php');
 		//Подключаем файл с классом сущности "Заказ",
@@ -40,7 +40,7 @@ if (isset($_REQUEST['action'])) {
 			        //Если при этом произошла ошибка
 			        if ($err) {
 			            //Помещаем в переменную ответа текст ошибки
-		                $response = "sql eror: $err";
+		                $response = json_encode(['result' => "sql eror: $err"]);
 			        } else {
 			        	//Если сохранение выполнилось успешно - пмещаем в переменную ответа строку created
 		        		$response = json_encode(['result' => 'created']);

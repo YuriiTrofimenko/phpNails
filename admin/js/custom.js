@@ -242,4 +242,18 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#cancelOrder').click(function(ev){
+
+        ev.preventDefault();
+
+        console.log("cancelOrder");
+    });
+
+    $('#deleteOrder').click(function(ev){
+
+        ev.preventDefault();
+
+        console.log("deleteOrder");
+    });
 });

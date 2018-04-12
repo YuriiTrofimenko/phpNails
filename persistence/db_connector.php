@@ -11,7 +11,7 @@ function getDbContext(){
     //имя пользователя БД
     $user = "root";
     //пароль пользователя БД
-    $pass = "root";
+    $pass = "";
     //имя БД
     $dbname = "nails";
 
