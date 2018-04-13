@@ -49,6 +49,17 @@ if (isset($_REQUEST['action'])) {
 				}
 				//Запрос бронирования заказа, отправленный со страницы index.html (отправлен файлом js/custom/ajax.js)
 				case 'book-order': {
+
+					$checkOrder =
+						Order::checkOrderAvailable(
+			            	$_REQUEST['date']
+			            	, $_REQUEST['manicurist-id']
+			            	, $_REQUEST['hours-id']);
+		            if ($checkOrder != 'available') {
+		                
+		                $response = json_encode(['result' => $checkOrder]);
+		            	break;
+		            }
 					//Создаем обхъект Заказ и заполняем его данными из запроса,
 					//в поле "идентификатор статуса" заносится 2 - строка состояния "забронирован" из таблицы статусов в БД)
 					$order = new Order(

@@ -253,16 +253,14 @@ $(document).ready(function() {
         });
     });
 
-    $('#doneOrder').click(function(ev){
-
-        ev.preventDefault();
+    function updateOrderState(statusId){
 
         if ($('.selectedTableRow').find('th').length === 0) {
 
             alert('Сначала выберите одну строку в таблице');
         } else {
 
-            console.log($('.selectedTableRow').find('th').text());
+            //console.log($('.selectedTableRow').find('th').text());
             var orderId = $('.selectedTableRow').find('th').text();
 
             $.ajax({
@@ -274,14 +272,14 @@ $(document).ready(function() {
                 data: { 
                     'action': 'update-order-status'
                     , 'order-id' : orderId
-                    , 'status-id': '3'
+                    , 'status-id': statusId
                 },
                 cache : false
             }).done(function(data) {
                 
                 //Если ответ от сервера получен -
                 //выводим его для отладки в консоль браузера
-                console.log(data.result);
+                //console.log(data.result);
                 //Проверяем, успешно ли выполнено создание записи о заказе
                 if (data.result == 'updated') {
                     
@@ -292,15 +290,20 @@ $(document).ready(function() {
                 }
             });
         }
+    }
 
-        
+    $('#doneOrder').click(function(ev){
+
+        ev.preventDefault();
+
+        updateOrderState(3);
     });
 
     $('#cancelOrder').click(function(ev){
 
         ev.preventDefault();
 
-        console.log("cancelOrder");
+        updateOrderState(1);
     });
 
     $('#deleteOrder').click(function(ev){

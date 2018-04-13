@@ -79,10 +79,50 @@ class Order {
             }
         }
     }
+
+    static function checkOrderAvailable($desiredDate, $manicuristId, $desiredTimeId){
+
+        try {
+            //Получаем контекст для работы с БД
+            $pdo = getDbContext();
+            $ps = $pdo->prepare(
+                "SELECT `status_id` FROM `Order` WHERE `desired_date` = ? AND `manicurist_id` = ? AND `desired_time_id` = ?"
+                );
+            //выполняем запрос к БД
+            $resultCode = $ps->execute([$desiredDate, $manicuristId, $desiredTimeId]);
+            if ($resultCode) {
+                
+                $row = $ps->fetch();
+                if ($row['status_id'] != '1') {
+                    
+                    return 'already_booked';
+                }
+                
+                return 'available';
+            } else {
+                
+                return "no_result";
+            }
+        } catch (PDOException $e) {
+
+            $err = $e->getMessage();
+
+            if (substr($err, 0, strrpos($err, ":")) == 'SQLSTATE[23000]:Integrity constraint violation') {
+
+                return 1062;
+
+            } else {
+
+                return $e->getMessage();
+            }
+        }
+    }
+
     //Обновление данных в БД - бронирование
     function updateDb() {
 
         try {
+
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
             //Готовим sql-запрос обновления строки данных о заказе в таблицу Order
@@ -120,9 +160,18 @@ class Order {
             //Получаем контекст для работы с БД
             $pdo = getDbContext();
             //Готовим sql-запрос обновления строки данных о заказе в таблицу Order
-            $ps = $pdo->prepare(
+            $ps = null;
+            if ($newStatus === '1') {
+                
+                $ps = $pdo->prepare(
+                "UPDATE `Order` SET `name`='-',`phone`='-',`comment`='-', `status_id` = ? WHERE `id` = ?"
+                );
+            } else {
+
+                $ps = $pdo->prepare(
                 "UPDATE `Order` SET `status_id` = ? WHERE `id` = ?"
                 );
+            }
             
             //выполняем запрос к БД
             $ps->execute([$newStatus, $orderId]);

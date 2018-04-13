@@ -17,13 +17,20 @@ $(document).ready(function () {
        "max" : maxDate.toDateInputValue()
     });
 
-    $('#calendar').change(function() {
+    $('#calendar').change(function(ev) {
+
+        console.log('1 - ' + ev.date);
       
+        if (ev.date !== undefined) {
+            $('#calendar').val(ev.date);
+        }
         populateManicuristsList();
     });
 
     //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
     function populateManicuristsList() {
+
+        console.log('2 - ' + $('#calendar').val());
         $.ajax({
             url: "api/manicurists.php",
             //method : "POST",
@@ -160,13 +167,19 @@ $(document).ready(function () {
                 $form[0].reset();
             } //Иначе сообщаем об ошибке (далее можно заменить на отображение сообщения в форме)
             else {
-                alert('Ошибка добавления заказа');
+                alert('Ошибка бронирования заказа. Обновите страницу и повторите попытку');
             }
             //Делаем поля ввода формы снова активными
             $inputs.prop("disabled", false);
             $('#manicurists-select select').attr('disabled', '');
             $('#time-select select').attr('disabled', '');
             $('form#create-order button').attr('disabled', '');
+
+
+            $('#calendar').trigger({
+                type: "change",
+                date: new Date().toDateInputValue()
+            });
         });
     });
 });
