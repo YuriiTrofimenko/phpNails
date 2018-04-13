@@ -309,7 +309,28 @@ $(document).ready(function() {
     $('#deleteOrder').click(function(ev){
 
         ev.preventDefault();
+        var orderId = $('.selectedTableRow').find('th').text();
+        $.ajax({
+            url: "../api/orders.php",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'delete-order'
+                , 'order-id' : orderId
+            },
+            cache : false
+        }).done(function(data) {
 
-        console.log("deleteOrder");
+            //console.log(data);
+            //Проверяем, успешно ли выполнено создание записи о заказе
+            if (data.result == 'deleted') {
+                //Сообщаем пользователю об успешной отправке (далее можно заменить на отображение сообщения в форме)
+                //alert('Заказ успешно добавлен');
+                populateTable();
+            } //Иначе сообщаем об ошибке (далее можно заменить на отображение сообщения в форме)
+            else {
+                alert('Ошибка удаления заказа');
+            }
+        });
     });
 });

@@ -190,6 +190,31 @@ class Order {
         }
     }
 
+    //DELETE FROM `Order` WHERE 0
+    static function deleteOrderById($orderId) {
+
+        try {
+            //Получаем контекст для работы с БД
+            $pdo = getDbContext();
+            //Готовим sql-запрос
+            $ps = $pdo->prepare("DELETE FROM `Order` WHERE `id` = ?");
+            //выполняем запрос к БД
+            $ps->execute([$orderId]);
+        } catch (PDOException $e) {
+
+            $err = $e->getMessage();
+
+            if (substr($err, 0, strrpos($err, ":")) == 'SQLSTATE[23000]:Integrity constraint violation') {
+
+                return 1062;
+
+            } else {
+
+                return $e->getMessage();
+            }
+        }
+    }
+
     //DB -> object
     //Чтение одного заказа из БД (сейчас не используется, но может понадобиться в будущем)
     static function fromDB($id) {

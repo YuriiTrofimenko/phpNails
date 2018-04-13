@@ -106,6 +106,20 @@ if (isset($_REQUEST['action'])) {
 			        }
 					break;
 				}
+
+				case 'delete-order': {
+					//
+			        $err = Order::deleteOrderById($_REQUEST['order-id']);
+
+			        if ($err) {
+			            //Помещаем в переменную ответа текст ошибки
+		                $response = "sql eror: $err";
+			        } else {
+			        	//
+		        		$response = json_encode(['result' => 'deleted']);
+			        }
+					break;
+				}
 				
 				default: {
 					
