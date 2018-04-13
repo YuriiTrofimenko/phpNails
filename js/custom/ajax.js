@@ -25,9 +25,63 @@ $(document).ready(function () {
             $('#calendar').val(ev.date);
         }
         populateManicuristsList();
+        populateTable();
     });
 
-    //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+    //Готовим функцию заполнения таблицы данными о заказах
+    function populateTable() {
+        $('#table-container').html("<div class='progress'><div class='indeterminate'></div></div>");
+        //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+        $.ajax({
+            url: "api/orders.php",
+            //method : "POST",
+            dataType: 'json',
+            type: "POST",
+            data: { 
+                'action': 'fetch-orders'
+                , 'date': $('#calendar').val()
+            },
+            cache : false
+        }).done(function(data) {
+            
+            //В ответ получаем json-строку data с данными о всех заказах
+
+            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
+            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
+            //далее можно форматировать при помощи js)
+            var template = Hogan.compile(
+                '<h3>'
+                +   'Расписание'
+                + '</h3>'
+                + '<table class="table">'
+                +  '<thead>'
+                +    '<tr>'
+                +      '<th>ID</th>'
+                +       '<th>клиент</th>'
+                +       '<th>время</th>'
+                +       '<th>мастер</th>'
+                +    '</tr>'
+                +  '</thead>'
+                +  '<tbody>'
+                +       '{{#orders}}'
+                +           '<tr>'
+                +               '<th scope="row">{{id}}</th>'
+                +               '<td>{{name}}</td>'
+                +               '<td>{{hours}}</td>'
+                +               '<td>{{manicurist_name}}</td>'
+                +            '</tr>'
+                +        '{{/orders}}'
+                +   '</tbody>'
+                + '</table>'
+            );
+            //Заполняем шаблон данными и помещаем на веб-страницу
+            $('#table-container').html(template.render(data));
+        });
+    }
+    //Вызываем функцию заполнения таблицы данными о заказах
+    populateTable();
+
+    //
     function populateManicuristsList() {
 
         console.log('2 - ' + $('#calendar').val());
@@ -158,8 +212,9 @@ $(document).ready(function () {
             
             //Если ответ от сервера получен -
             //выводим его для отладки в консоль браузера
-            console.log(data.result);
+            //console.log(data.result);
             //Проверяем, успешно ли выполнено создание записи о заказе
+            var selectedDate = $('#calendar').val();
             if (data.result == 'booked') {
                 //Сообщаем пользователю об успешной отправке (далее можно заменить на отображение сообщения в форме)
                 alert('Заказ успешно добавлен');
@@ -175,10 +230,10 @@ $(document).ready(function () {
             $('#time-select select').attr('disabled', '');
             $('form#create-order button').attr('disabled', '');
 
-
+            console.log('0 - ' + selectedDate);
             $('#calendar').trigger({
                 type: "change",
-                date: new Date().toDateInputValue()
+                date: selectedDate
             });
         });
     });
