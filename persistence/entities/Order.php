@@ -47,7 +47,7 @@ class Order {
     }
 
     //object -> DB
-    //запись данных в БД
+    //запись данных из текущего объекта Заказ в БД
     function intoDb() {
 
         try {
@@ -80,6 +80,7 @@ class Order {
         }
     }
 
+    //Проверка строки в расписании на доступность для бронирования
     static function checkOrderAvailable($desiredDate, $manicuristId, $desiredTimeId){
 
         try {
@@ -97,7 +98,9 @@ class Order {
                     
                     return 'already_booked';
                 }
-                
+                //Только если строка с такими параметрами существует
+                //и не забронирована -
+                //возвращаем положительный ответ
                 return 'available';
             } else {
                 
@@ -153,7 +156,7 @@ class Order {
         }
     }
 
-    //Обновление данных в БД
+    //Обновление статуса строки расписания в БД
     static function updateOrderStatus($orderId, $newStatus) {
 
         try {
@@ -161,13 +164,14 @@ class Order {
             $pdo = getDbContext();
             //Готовим sql-запрос обновления строки данных о заказе в таблицу Order
             $ps = null;
+            //Если заказ отменен, и строка должна освободиться для бронирования 
             if ($newStatus === '1') {
-                
+                //Меняем статус на исходный и стираем информацию о клиенте
                 $ps = $pdo->prepare(
                 "UPDATE `Order` SET `name`='-',`phone`='-',`comment`='-', `status_id` = ? WHERE `id` = ?"
                 );
             } else {
-
+                //Иначе только меняем статус
                 $ps = $pdo->prepare(
                 "UPDATE `Order` SET `status_id` = ? WHERE `id` = ?"
                 );
@@ -190,7 +194,7 @@ class Order {
         }
     }
 
-    //DELETE FROM `Order` WHERE 0
+    //Удаление строки расписания из БД
     static function deleteOrderById($orderId) {
 
         try {

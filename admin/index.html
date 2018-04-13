@@ -31,15 +31,18 @@
 		                    	<label for="manicurists-select">
 		                            Мастер:
 		                        </label>
+                                <!-- Сюда при помощи jquery помещается шаблон, заполненный именами мастеров -->
 		                        <div id="manicurists-select" class="input-field"></div>
 		                        <label for="time-select">
 		                            Время:
 		                        </label>
+                                <!-- Сюда при помощи jquery помещается шаблон, заполненный часами приема -->
 		                        <div id="time-select" class="input-field">
 		                        	<select disabled>
 					                	<option disabled="" selected="" value="">Выбор времени</option>
 					                </select>
 		                        </div>
+                                <!-- Кнопка добавления новой строки в расписание на основании данных формы -->
 		                        <button disabled class="btn waves-effect waves-light" id="submit-button2" name="action" type="submit">
 		                            Добавить
 		                            <i class="material-icons right">
@@ -52,7 +55,7 @@
                 </div>
                 <div class="col s12 m9 l9 xl9">
                     <h4>
-                        Заказы
+                        Расписание
                     </h4>
                     <div class="row">
                         <div class="col s6">
@@ -64,20 +67,9 @@
                                 </input>
                             </form>
                         </div>
-                        
-                        <!-- <div class="col s12 m2 l2 xl2">
-                            <form>
-                                <button class="waves-effect waves-light btn" type="button">Cancel</button>
-                            </form>
-                        </div>
-                        <div class="col s12 m2 l2 xl2">
-                            <form>
-                                <button class="waves-effect waves-light btn" type="button">Delete</button>
-                            </form>
-                        </div> -->
                     </div>
 
-                    <!-- Сюда при помощи jquery помещается шаблон, заполненный данными о заказах -->
+                    <!-- Сюда при помощи jquery помещается шаблон таблицы, заполненный данными о заказах -->
                     <div class="row">
                         <div class="col s12 m12 l12 xl12">
                             <div id="table-container">

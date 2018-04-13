@@ -92,9 +92,9 @@ if (isset($_REQUEST['action'])) {
 	        		$response = json_encode(['orders' => $orders]);
 					break;
 				}
-				//
+				//Запрос на изменение статуса строки в расписании
 				case 'update-order-status': {
-					//
+					//Пытаемся обновить идентификатор статуса у заданной строки
 			        $err = Order::updateOrderStatus($_REQUEST['order-id'], $_REQUEST['status-id']);
 
 			        if ($err) {
@@ -106,9 +106,9 @@ if (isset($_REQUEST['action'])) {
 			        }
 					break;
 				}
-
+				//Зпрос на удаление строки из расписания
 				case 'delete-order': {
-					//
+					//Пытаемся удалить
 			        $err = Order::deleteOrderById($_REQUEST['order-id']);
 
 			        if ($err) {

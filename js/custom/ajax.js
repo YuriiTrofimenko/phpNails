@@ -1,14 +1,15 @@
 $(document).ready(function () {
 
-    //
+    //Добавляем к стандартному типу Дата функцию коррекции даты по часовому поясу
     Date.prototype.toDateInputValue = (function() {
         var local = new Date(this);
         local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
         return local.toJSON().slice(0,10);
     });
-
+    //Устанавливаем в элемент ввода Дата (Календарь) текущую дату,
+    //вызывая на ней предварительно нашу корректирующую функцию
     $('#calendar').val(new Date().toDateInputValue());
-
+    //Задаем календарю окно допустимых дат - от текущей включительно на 7 дней вперед
     var minDate = new Date();
     var maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 7);
@@ -19,12 +20,15 @@ $(document).ready(function () {
 
     $('#calendar').change(function(ev) {
 
-        console.log('1 - ' + ev.date);
-      
+        //Если обновление календаря вызвано принудительно сценарием
+        //после бронирования заказа      
         if (ev.date !== undefined) {
+            //Устанавливаем в календарь заранее сохраненное последнее его текущее значение
             $('#calendar').val(ev.date);
         }
+        //Заполняем список мастеров
         populateManicuristsList();
+        //Заполняем таблицу расписания
         populateTable();
     });
 
@@ -34,7 +38,6 @@ $(document).ready(function () {
         //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
         $.ajax({
             url: "api/orders.php",
-            //method : "POST",
             dataType: 'json',
             type: "POST",
             data: { 
@@ -44,11 +47,9 @@ $(document).ready(function () {
             cache : false
         }).done(function(data) {
             
-            //В ответ получаем json-строку data с данными о всех заказах
+            //В ответ получаем json-строку data с данными о всех заказах на выбранную дату
 
             //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
-            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
-            //далее можно форматировать при помощи js)
             var template = Hogan.compile(
                 '<h3>'
                 +   'Расписание'
@@ -81,10 +82,10 @@ $(document).ready(function () {
     //Вызываем функцию заполнения таблицы данными о заказах
     populateTable();
 
-    //
+    //Для заполнения списка доступных мастеров с указанием даты
     function populateManicuristsList() {
 
-        console.log('2 - ' + $('#calendar').val());
+        //console.log('2 - ' + $('#calendar').val());
         $.ajax({
             url: "api/manicurists.php",
             //method : "POST",
@@ -97,13 +98,8 @@ $(document).ready(function () {
             cache : false
         }).done(function(data) {
             
-            //В ответ получаем json-строку с данными о всех заказах
-            //и выводим в отладочную консоль браузера
-            //console.log(data);
-
-            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
-            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
-            //далее можно форматировать при помощи js)
+            //В ответ получаем json-строку
+            //Готовим шаблон списка мастеров при помощи библиотеки Hogan
             var template = Hogan.compile(
                 '<option disabled="" selected="" value="">Выбор мастера</option>'
                 +'{{#manicurists}}'                
@@ -114,28 +110,26 @@ $(document).ready(function () {
             );
             //Заполняем шаблон данными и помещаем на веб-страницу
             $('#manicurists-select select').html(template.render(data));
-
+            //Разблокируем выпадающий список имен мастеров
             $('#manicurists-select select').removeAttr('disabled');
 
             $('#manicurists-select select').unbind("change");
-            //
+            //Добавляем к нему обработчик выбора
             $('#manicurists-select select').change(function() {
-
-                //console.log($(this).val());
+                //Разблокирование списка выбора времени (часов приема)
                 $('#time-select select').removeAttr('disabled');
+                //Вызываем заполнение списка часов приема
                 populateTimeList();
             });
 
-            //populateTimeList();
         });
     }
     populateManicuristsList();
 
-    //Отправляем асинхронный запрос на сервер (в файл api/orders.php)
+    //Для заполнения списка часов приема
     function populateTimeList() {
         $.ajax({
             url: "api/hours.php",
-            //method : "POST",
             dataType: 'json',
             type: "POST",
             data: { 
@@ -146,13 +140,8 @@ $(document).ready(function () {
             cache : false
         }).done(function(data) {
             
-            //В ответ получаем json-строку с данными о всех заказах
-            //и выводим в отладочную консоль браузера
-            //console.log(data);
-
-            //Готовим шаблон таблицы заказов при помощи библиотеки Hogan
-            //(сейчас дата добавления заказа будет передаваться в него в неотформатированном виде,
-            //далее можно форматировать при помощи js)
+            //В ответ получаем json-строку с данными
+            //Готовим шаблон при помощи библиотеки Hogan
             var template = Hogan.compile(
                 '<option disabled="" selected="" value="">Выбор времени</option>'
                 +'{{#hours}}'                
@@ -191,10 +180,10 @@ $(document).ready(function () {
         //Отключаем поля ввода формы на время отправки запроса
         $inputs.prop("disabled", true);
 
-        //Отправка асинхронного запроса на сохранение данных в БД
+        //Отправка асинхронного запроса на изменение данных строки расписания в БД,
+        //указывая в параметрах data тип действия и все передаваемые данные формы
         $.ajax({
             url: "api/orders.php",
-            //method : "post",
             type: "POST",
             dataType: 'json',
             //data: serializedData,
@@ -210,11 +199,9 @@ $(document).ready(function () {
             cache : false
         }).done(function(data) {
             
-            //Если ответ от сервера получен -
-            //выводим его для отладки в консоль браузера
-            //console.log(data.result);
-            //Проверяем, успешно ли выполнено создание записи о заказе
+            //Сохраняем в переменную последнее значение календаря перед сбросом значений полей формы
             var selectedDate = $('#calendar').val();
+            //Проверяем, успешно ли выполнено бронирование
             if (data.result == 'booked') {
                 //Сообщаем пользователю об успешной отправке (далее можно заменить на отображение сообщения в форме)
                 alert('Заказ успешно добавлен');
@@ -230,7 +217,9 @@ $(document).ready(function () {
             $('#time-select select').attr('disabled', '');
             $('form#create-order button').attr('disabled', '');
 
-            console.log('0 - ' + selectedDate);
+            //console.log('0 - ' + selectedDate);
+            //Вызываем событие Изменение календаря, передавая в в его аргументах
+            //последнее значение календаря, чтобы затем его снова установить
             $('#calendar').trigger({
                 type: "change",
                 date: selectedDate
